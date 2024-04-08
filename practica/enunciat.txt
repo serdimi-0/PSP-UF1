@@ -1,0 +1,14 @@
+- server i 2 clients
+- abans d'iniciar el server et demana el mètode d'encriptació
+
+- login usuaris (no fa falta contrasenya, només nick)
+- server avisa de numero de clients connectats
+
+- els missatges s'envien a tothom, incloent el remitent
+- s'envien amb nom i data
+- quan un usuari nou entra veurà N missatges anteriors, como?
+- "BYE" per desconnectar
+
+- enviar fitxers
+- WPF
+- log
