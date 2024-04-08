@@ -1,0 +1,14 @@
+C:\Users\Sergio\Desktop\PSP\UF1\MD5Test\bin\Debug\net6.0\MD5Test.exe
+C:\Users\Sergio\Desktop\PSP\UF1\MD5Test\bin\Debug\net6.0\MD5Test.deps.json
+C:\Users\Sergio\Desktop\PSP\UF1\MD5Test\bin\Debug\net6.0\MD5Test.runtimeconfig.json
+C:\Users\Sergio\Desktop\PSP\UF1\MD5Test\bin\Debug\net6.0\MD5Test.dll
+C:\Users\Sergio\Desktop\PSP\UF1\MD5Test\bin\Debug\net6.0\MD5Test.pdb
+C:\Users\Sergio\Desktop\PSP\UF1\MD5Test\obj\Debug\net6.0\MD5Test.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Sergio\Desktop\PSP\UF1\MD5Test\obj\Debug\net6.0\MD5Test.AssemblyInfoInputs.cache
+C:\Users\Sergio\Desktop\PSP\UF1\MD5Test\obj\Debug\net6.0\MD5Test.AssemblyInfo.cs
+C:\Users\Sergio\Desktop\PSP\UF1\MD5Test\obj\Debug\net6.0\MD5Test.csproj.CoreCompileInputs.cache
+C:\Users\Sergio\Desktop\PSP\UF1\MD5Test\obj\Debug\net6.0\MD5Test.dll
+C:\Users\Sergio\Desktop\PSP\UF1\MD5Test\obj\Debug\net6.0\refint\MD5Test.dll
+C:\Users\Sergio\Desktop\PSP\UF1\MD5Test\obj\Debug\net6.0\MD5Test.pdb
+C:\Users\Sergio\Desktop\PSP\UF1\MD5Test\obj\Debug\net6.0\MD5Test.genruntimeconfig.cache
+C:\Users\Sergio\Desktop\PSP\UF1\MD5Test\obj\Debug\net6.0\ref\MD5Test.dll

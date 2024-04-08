@@ -1,0 +1,14 @@
+C:\Users\Sergio\Desktop\PSP\UF1\SignVerify\bin\Debug\net6.0\SignVerify.exe
+C:\Users\Sergio\Desktop\PSP\UF1\SignVerify\bin\Debug\net6.0\SignVerify.deps.json
+C:\Users\Sergio\Desktop\PSP\UF1\SignVerify\bin\Debug\net6.0\SignVerify.runtimeconfig.json
+C:\Users\Sergio\Desktop\PSP\UF1\SignVerify\bin\Debug\net6.0\SignVerify.dll
+C:\Users\Sergio\Desktop\PSP\UF1\SignVerify\bin\Debug\net6.0\SignVerify.pdb
+C:\Users\Sergio\Desktop\PSP\UF1\SignVerify\obj\Debug\net6.0\SignVerify.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Sergio\Desktop\PSP\UF1\SignVerify\obj\Debug\net6.0\SignVerify.AssemblyInfoInputs.cache
+C:\Users\Sergio\Desktop\PSP\UF1\SignVerify\obj\Debug\net6.0\SignVerify.AssemblyInfo.cs
+C:\Users\Sergio\Desktop\PSP\UF1\SignVerify\obj\Debug\net6.0\SignVerify.csproj.CoreCompileInputs.cache
+C:\Users\Sergio\Desktop\PSP\UF1\SignVerify\obj\Debug\net6.0\SignVerify.dll
+C:\Users\Sergio\Desktop\PSP\UF1\SignVerify\obj\Debug\net6.0\refint\SignVerify.dll
+C:\Users\Sergio\Desktop\PSP\UF1\SignVerify\obj\Debug\net6.0\SignVerify.pdb
+C:\Users\Sergio\Desktop\PSP\UF1\SignVerify\obj\Debug\net6.0\SignVerify.genruntimeconfig.cache
+C:\Users\Sergio\Desktop\PSP\UF1\SignVerify\obj\Debug\net6.0\ref\SignVerify.dll

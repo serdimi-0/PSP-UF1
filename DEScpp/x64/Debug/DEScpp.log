@@ -1,0 +1,8 @@
+﻿  DEScpp.cpp
+C:\Users\Sergio\Desktop\PSP\UF1\DEScpp\DEScpp.cpp(389,42): warning C4101: 't': variable local sin referencia
+C:\Users\Sergio\Desktop\PSP\UF1\DEScpp\DEScpp.cpp(454,9): warning C4101: 'a1': variable local sin referencia
+C:\Users\Sergio\Desktop\PSP\UF1\DEScpp\DEScpp.cpp(454,42): warning C4101: 't': variable local sin referencia
+C:\Users\Sergio\Desktop\PSP\UF1\DEScpp\DEScpp.cpp(522,9): warning C4101: 'j': variable local sin referencia
+C:\Users\Sergio\Desktop\PSP\UF1\DEScpp\DEScpp.cpp(564,9): error C2660: 'Des::Decrypt': la función no acepta 3 argumentos
+C:\Users\Sergio\Desktop\PSP\UF1\DEScpp\DEScpp.cpp(452,21): message : vea la declaración de 'Des::Decrypt'
+C:\Users\Sergio\Desktop\PSP\UF1\DEScpp\DEScpp.cpp(564,9): message : al hacer coincidir la lista de argumentos '(unsigned char *, int, int)'

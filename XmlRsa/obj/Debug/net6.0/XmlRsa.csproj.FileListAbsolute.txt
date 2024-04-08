@@ -1,0 +1,14 @@
+C:\Users\Sergio\Desktop\PSP\UF1\XmlRsa\bin\Debug\net6.0\XmlRsa.exe
+C:\Users\Sergio\Desktop\PSP\UF1\XmlRsa\bin\Debug\net6.0\XmlRsa.deps.json
+C:\Users\Sergio\Desktop\PSP\UF1\XmlRsa\bin\Debug\net6.0\XmlRsa.runtimeconfig.json
+C:\Users\Sergio\Desktop\PSP\UF1\XmlRsa\bin\Debug\net6.0\XmlRsa.dll
+C:\Users\Sergio\Desktop\PSP\UF1\XmlRsa\bin\Debug\net6.0\XmlRsa.pdb
+C:\Users\Sergio\Desktop\PSP\UF1\XmlRsa\obj\Debug\net6.0\XmlRsa.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Sergio\Desktop\PSP\UF1\XmlRsa\obj\Debug\net6.0\XmlRsa.AssemblyInfoInputs.cache
+C:\Users\Sergio\Desktop\PSP\UF1\XmlRsa\obj\Debug\net6.0\XmlRsa.AssemblyInfo.cs
+C:\Users\Sergio\Desktop\PSP\UF1\XmlRsa\obj\Debug\net6.0\XmlRsa.csproj.CoreCompileInputs.cache
+C:\Users\Sergio\Desktop\PSP\UF1\XmlRsa\obj\Debug\net6.0\XmlRsa.dll
+C:\Users\Sergio\Desktop\PSP\UF1\XmlRsa\obj\Debug\net6.0\refint\XmlRsa.dll
+C:\Users\Sergio\Desktop\PSP\UF1\XmlRsa\obj\Debug\net6.0\XmlRsa.pdb
+C:\Users\Sergio\Desktop\PSP\UF1\XmlRsa\obj\Debug\net6.0\XmlRsa.genruntimeconfig.cache
+C:\Users\Sergio\Desktop\PSP\UF1\XmlRsa\obj\Debug\net6.0\ref\XmlRsa.dll
