@@ -36,6 +36,7 @@ namespace Client
         byte[] keyBytes, ivBytes;
         bool runThread = true;
         string publicKey, privateKey, serverPublicKey;
+        string method;
 
         public ChatWindow(string username)
         {
@@ -50,6 +51,7 @@ namespace Client
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             lsbMsg.ItemsSource = missatges;
+            lblTitle.Content = "Xat de " + username;
 
             // Connexio
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -62,7 +64,7 @@ namespace Client
             // Rebem el tipus d'encriptació
             byte[] methodBytes = new byte[3];
             socket.Receive(methodBytes);
-            string method = Encoding.UTF8.GetString(methodBytes);
+            method = Encoding.UTF8.GetString(methodBytes);
 
             // Creem el fil per escoltar els missatges del servidor
             switch (method)
@@ -75,12 +77,15 @@ namespace Client
                     lblMethod.Content = "Mètode d'encriptació: RSA";
 
                     // Rebem la clau pública del servidor
-                    byte[] publicKeyBytes = new byte[2048];
-                    socket.Receive(publicKeyBytes);
+                    byte[] tmp = new byte[2048];
+                    int size = socket.Receive(tmp);
+                    byte[] publicKeyBytes = new byte[size];
+                    Array.Copy(tmp, publicKeyBytes, size);
                     serverPublicKey = Encoding.UTF8.GetString(publicKeyBytes);
 
                     // Generem parell de claus
                     RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+                    rsa.ExportParameters(true);
                     publicKey = rsa.ToXmlString(false);
                     privateKey = rsa.ToXmlString(true);
 
@@ -103,14 +108,35 @@ namespace Client
         {
 
             if (txbMsg.Text == "")
-            {
                 return;
-            }
 
             byte[] msgBytes = Encoding.UTF8.GetBytes(txbMsg.Text);
 
             // enviem el missatge
-            socket.Send(DESEncrypt(msgBytes));
+            switch (method)
+            {
+                case "des":
+                    socket.Send(DESEncrypt(msgBytes));
+                    break;
+                case "rsa":
+                    // Generem la clau simètrica random
+                    string clauDes = generarClauDes();
+                    byte[] bytesClauDes = Encoding.UTF8.GetBytes(clauDes);
+
+                    // Encriptem el missatge amb la clau simètrica
+                    byte[] msgEncriptat = DESEncrypt(msgBytes, bytesClauDes);
+                    socket.Send(msgEncriptat);
+
+                    // Encriptem la clau simètrica amb la clau pública del servidor
+                    byte[] clauDesEncriptada = RSAEncrypt(clauDes, serverPublicKey);
+                    socket.Send(clauDesEncriptada);
+
+                    break;
+                case "inv":
+                    break;
+                default:
+                    break;
+            }
 
             txbMsg.Text = "";
         }
@@ -171,10 +197,8 @@ namespace Client
         }
         private void listenerRSAFunction(Socket socket, List<Missatge> missatges)
         {
-            byte[] usernameBytes;
-            string username;
-            byte[] msgBytes;
-            string msg;
+            byte[] usernameBytes, msgBytes, keyBytes;
+            string username, msg, key;
 
             while (runThread)
             {
@@ -191,7 +215,17 @@ namespace Client
                     msgBytes = new byte[bytesRec];
                     Array.Copy(tmp, msgBytes, bytesRec);
 
-                    tmp = DESDecrypt(msgBytes);
+                    // Rebem la contrasenya
+                    tmp = new byte[2048];
+                    bytesRec = socket.Receive(tmp);
+                    keyBytes = new byte[bytesRec];
+                    Array.Copy(tmp, keyBytes, bytesRec);
+
+                    // Desencriptem la contrasenya amb la nostra clau privada
+                    key = RSADecrypt(keyBytes, privateKey);
+
+                    // Amb DES, desencriptem el missatge
+                    tmp = DESDecrypt(msgBytes, Encoding.ASCII.GetBytes(key));
                     msg = Encoding.UTF8.GetString(tmp, 0, tmp.Length);
 
                     // Afegim el missatge a la llista
@@ -227,6 +261,21 @@ namespace Client
 
         }
 
+        byte[] DESDecrypt(byte[] input, byte[] key)
+        {
+
+            ICryptoTransform decryptor = des.CreateDecryptor(key, key);
+            byte[] decryptedBytes = decryptor.TransformFinalBlock(input, 0, input.Length);
+            return decryptedBytes;
+        }
+
+        byte[] DESEncrypt(byte[] input, byte[] key)
+        {
+            ICryptoTransform encryptor = des.CreateEncryptor(key, key);
+            byte[] encryptedBytes = encryptor.TransformFinalBlock(input, 0, input.Length);
+            return encryptedBytes;
+        }
+
         byte[] DESDecrypt(byte[] input)
         {
 
@@ -255,6 +304,17 @@ namespace Client
             string missatgeDesencriptatString = Encoding.ASCII.GetString(missatgeDesencriptat);
 
             return missatgeDesencriptatString;
+        }
+
+        public string generarClauDes()
+        {
+            string clau = "";
+            Random random = new Random();
+            for (int i = 0; i < 8; i++)
+            {
+                clau += (char)random.Next(65, 90);
+            }
+            return clau;
         }
     }
 }

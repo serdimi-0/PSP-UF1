@@ -10,7 +10,7 @@ namespace Server
     {
         const int PORT = 9999;
         const int MAX_CONNECTIONS = 10;
-        static List<Socket> clients = new List<Socket>();
+        static List<Client> clients = new List<Client>();
         private static string? method;
 
         const string serverPublicKey = "<RSAKeyValue><Modulus>yXA14h2M/bLlMsERDyy9ErTh6VyFklaN+8GfMxQkVNcx9IS0AESWgVX49w802EcrYZib1oGJuPW1HTX1A1eyb75JXkolq2mSHr+GCjMqV7xlTljOf7u42av0kZKNOvWUQEDo/aOtYpOZH7CSmA3f4dhBGdLoh7TqhB/fGdMwnEk=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>";
@@ -74,18 +74,19 @@ namespace Server
                 // Acceptem connexions
                 Console.WriteLine("Esperant connexions...");
                 Socket handler = socket.Accept();
-                lock (clients)
-                    clients.Add(handler);
 
+                Client client = new Client(handler);
 
                 // Obtenim la IP del client
                 string ip = ((IPEndPoint)handler.RemoteEndPoint).Address.ToString();
+                client.Ip = ip;
 
                 // Llegim el nom d'usuari
                 byte[] usernameBytes = new byte[1024];
                 int bytesRec = handler.Receive(usernameBytes);
                 string username = Encoding.UTF8.GetString(usernameBytes, 0, bytesRec);
                 Console.WriteLine("Usuari connectat: " + username + " (" + ip + ")");
+                client.Username = username;
 
                 // Enviar el tipus d'encriptació
                 byte[] methodBytes = Encoding.UTF8.GetBytes(method);
@@ -94,7 +95,10 @@ namespace Server
                 switch (method)
                 {
                     case "des":
-                        t = new Thread(() => clientDESThreadFunction(handler, ip, username));
+                        lock (clients)
+                            clients.Add(client);
+
+                        t = new Thread(() => clientDESThreadFunction(client));
                         t.Start();
                         break;
                     case "rsa":
@@ -104,12 +108,18 @@ namespace Server
                         Console.WriteLine($"Clau pública del servidor enviada a {username}, {ip}");
 
                         // Rebem la clau pública del client
-                        byte[] publicKeyBytes = new byte[2048];
-                        handler.Receive(publicKeyBytes);
+                        byte[] tmp = new byte[2048];
+                        int size = handler.Receive(tmp);
+                        byte[] publicKeyBytes = new byte[size];
+                        Array.Copy(tmp, publicKeyBytes, size);
+                        client.ClauPublica = Encoding.UTF8.GetString(publicKeyBytes);
 
                         Console.WriteLine($"Clau pública de {username}, {ip} rebuda: {Encoding.UTF8.GetString(publicKeyBytes)}");
 
-                        t = new Thread(() => clientRSAThreadFunction(handler, ip, username, usernameBytes, Encoding.UTF8.GetString(publicKeyBytes)));
+                        lock (clients)
+                            clients.Add(client);
+
+                        t = new Thread(() => clientRSAThreadFunction(client));
                         t.Start();
                         break;
                     case "inv":
@@ -124,7 +134,7 @@ namespace Server
             }
         }
 
-        private static void clientDESThreadFunction(Socket handler, string ip, string username)
+        private static void clientDESThreadFunction(Client client)
         {
             byte[] msgBytes;
             int bytesRec;
@@ -132,11 +142,11 @@ namespace Server
 
             while (true)
             {
-                Console.WriteLine($"[{username}, {ip}] Esperant missatge...");
+                Console.WriteLine($"[{client.Username}, {client.Ip}] Esperant missatge...");
 
                 // Rebem el missatge, que ha de tenir la longitud exacta que ens envia
                 byte[] tmp = new byte[2048];
-                bytesRec = handler.Receive(tmp);
+                bytesRec = client.Socket.Receive(tmp);
                 msgBytes = new byte[bytesRec];
                 Array.Copy(tmp, msgBytes, bytesRec);
 
@@ -146,41 +156,41 @@ namespace Server
                     // protegim l'acces a la llista de clients
                     lock (clients)
                     {
-                        clients.Remove(handler);
-                        Console.WriteLine($"[{username}, {ip}] Desconnectat.");
+                        clients.Remove(client);
+                        Console.WriteLine($"[{client.Username}, {client.Ip}] Desconnectat.");
                         Console.WriteLine("Clients connectats: " + clients.Count);
                     }
-                    handler.Close();
+                    client.Socket.Close();
                     return;
                 }
 
                 // Mostrem el missatge
-                Console.WriteLine($"[{username}, {ip}] Missatge enviat: {BitConverter.ToString(msgBytes)}");
+                Console.WriteLine($"[{client.Username}, {client.Ip}] Missatge enviat: {BitConverter.ToString(msgBytes)}");
 
                 // Enviem el missatge a tots els clients
-                foreach (Socket client in clients)
+                foreach (Client c in clients)
                 {
-                    client.Send(Encoding.ASCII.GetBytes(username));
-                    client.Send(msgBytes);
+                    c.Socket.Send(Encoding.ASCII.GetBytes(client.Username));
+                    c.Socket.Send(msgBytes);
                 }
 
             }
 
         }
 
-        private static void clientRSAThreadFunction(Socket handler, string ip, string username, byte[] usernameBytes, string publicKey)
+        private static void clientRSAThreadFunction(Client client)
         {
-            byte[] msgBytes;
+            byte[] msgBytes, keyBytes;
             int bytesRec;
 
 
             while (true)
             {
-                Console.WriteLine($"[{username}, {ip}] Esperant missatge...");
+                Console.WriteLine($"[{client.Username}, {client.Ip}] Esperant missatge...");
 
                 // Rebem el missatge, que ha de tenir la longitud exacta que ens envia
                 byte[] tmp = new byte[2048];
-                bytesRec = handler.Receive(tmp);
+                bytesRec = client.Socket.Receive(tmp);
                 msgBytes = new byte[bytesRec];
                 Array.Copy(tmp, msgBytes, bytesRec);
 
@@ -190,22 +200,34 @@ namespace Server
                     // protegim l'acces a la llista de clients
                     lock (clients)
                     {
-                        clients.Remove(handler);
-                        Console.WriteLine($"[{username}, {ip}] Desconnectat.");
+                        clients.Remove(client);
+                        Console.WriteLine($"[{client.Username}, {client.Ip}] Desconnectat.");
                         Console.WriteLine("Clients connectats: " + clients.Count);
                     }
-                    handler.Close();
+                    client.Socket.Close();
                     return;
                 }
+                Console.WriteLine($"[{client.Username}, {client.Ip}] Missatge enviat");
 
-                // Mostrem el missatge
-                Console.WriteLine($"[{username}, {ip}] Missatge enviat: {BitConverter.ToString(msgBytes)}");
+                // Rebem la clau simètrica
+                tmp = new byte[2048];
+                bytesRec = client.Socket.Receive(tmp);
+                keyBytes = new byte[bytesRec];
+                Array.Copy(tmp, keyBytes, bytesRec);
+                Console.WriteLine($"[{client.Username}, {client.Ip}] Clau del missatge rebuda");
+
+                // Desencriptem la clau simètrica amb la privada del servidor
+                string key = RSADecrypt(keyBytes, serverPrivateKey);
+                Console.WriteLine($"[{client.Username}, {client.Ip}] Clau desencriptada: {key}");
 
                 // Enviem el missatge a tots els clients
-                foreach (Socket client in clients)
+                Console.WriteLine($"[{client.Username}, {client.Ip}] Enviant missatges amb claus encriptades...");
+                foreach (Client c in clients)
                 {
-                    client.Send(Encoding.ASCII.GetBytes(username));
-                    client.Send(msgBytes);
+                    c.Socket.Send(Encoding.ASCII.GetBytes(client.Username));
+                    c.Socket.Send(msgBytes);
+                    // A part del missatage, enviem la clau encriptada amb la pública del client
+                    c.Socket.Send(RSAEncrypt(key, c.ClauPublica));
                 }
 
             }
@@ -233,5 +255,6 @@ namespace Server
 
             return missatgeDesencriptatString;
         }
+
     }
 }
