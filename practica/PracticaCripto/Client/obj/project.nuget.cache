@@ -1,8 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "sF/LlC9npiuZhFLlI0E8PkTT9h5GfEs8nM6x9OVLMCsL6+DNxnxzzxYwJyWLlcfnu+gpdKhqI/SCtfRyh3YmHQ==",
+  "dgSpecHash": "hdUWxrHIfFsLLkIdYdDJuO12eiD9tp+pITJJRqTwLe688ptMZRHeYE3+K8rQApcaP3ceV+I05e3vD2tFYY3QHA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Sergio\\Desktop\\PSP\\UF1\\practica\\PracticaCripto\\Client\\Client.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\Sergio\\Desktop\\DAM\\pspuf1\\PSP-UF1\\practica\\PracticaCripto\\Client\\Client.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Sergio\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.25\\microsoft.windowsdesktop.app.ref.6.0.25.nupkg.sha512",
+    "C:\\Users\\Sergio\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.25\\microsoft.netcore.app.ref.6.0.25.nupkg.sha512",
+    "C:\\Users\\Sergio\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.25\\microsoft.aspnetcore.app.ref.6.0.25.nupkg.sha512",
+    "C:\\Users\\Sergio\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.25\\microsoft.netcore.app.host.win-x64.6.0.25.nupkg.sha512"
+  ],
   "logs": []
 }

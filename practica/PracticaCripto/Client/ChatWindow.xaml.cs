@@ -34,6 +34,8 @@ namespace Client
         string DESKey = "12345678";
         string DESIV = "12345678";
         byte[] keyBytes, ivBytes;
+        bool runThread = true;
+        string publicKey, privateKey, serverPublicKey;
 
         public ChatWindow(string username)
         {
@@ -49,14 +51,6 @@ namespace Client
         {
             lsbMsg.ItemsSource = missatges;
 
-            string hola = "hola";
-            byte[] holaBytes = Encoding.UTF8.GetBytes(hola);
-            byte[] encryptedBytes = DESEncrypt(holaBytes);
-            byte[] decryptedBytes = DESDecrypt(encryptedBytes);
-            string decrypted = Encoding.UTF8.GetString(decryptedBytes);
-
-            txbMsg.Text = decrypted;
-
             // Connexio
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.Connect("localhost", PORT);
@@ -65,11 +59,45 @@ namespace Client
             usernameBytes = Encoding.UTF8.GetBytes(username);
             socket.Send(usernameBytes);
 
+            // Rebem el tipus d'encriptació
+            byte[] methodBytes = new byte[3];
+            socket.Receive(methodBytes);
+            string method = Encoding.UTF8.GetString(methodBytes);
+
             // Creem el fil per escoltar els missatges del servidor
-            listener = new Thread(() => listenerFunction(socket, missatges));
+            switch (method)
+            {
+                case "des":
+                    lblMethod.Content = "Mètode d'encriptació: DES";
+                    listener = new Thread(() => listenerDESFunction(socket, missatges));
+                    break;
+                case "rsa":
+                    lblMethod.Content = "Mètode d'encriptació: RSA";
+
+                    // Rebem la clau pública del servidor
+                    byte[] publicKeyBytes = new byte[2048];
+                    socket.Receive(publicKeyBytes);
+                    serverPublicKey = Encoding.UTF8.GetString(publicKeyBytes);
+
+                    // Generem parell de claus
+                    RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+                    publicKey = rsa.ToXmlString(false);
+                    privateKey = rsa.ToXmlString(true);
+
+                    socket.Send(Encoding.UTF8.GetBytes(publicKey));
+
+                    listener = new Thread(() => listenerRSAFunction(socket, missatges));
+                    break;
+                case "inv":
+                    break;
+                default:
+                    break;
+            }
+
             listener.Start();
 
         }
+
 
         private void sendMessage()
         {
@@ -81,8 +109,7 @@ namespace Client
 
             byte[] msgBytes = Encoding.UTF8.GetBytes(txbMsg.Text);
 
-            // enviem l'user i el missatge
-            socket.Send(usernameBytes);
+            // enviem el missatge
             socket.Send(DESEncrypt(msgBytes));
 
             txbMsg.Text = "";
@@ -101,44 +128,97 @@ namespace Client
             }
         }
 
-        void listenerFunction(Socket socket, List<Missatge> missatges)
+        void listenerDESFunction(Socket socket, List<Missatge> missatges)
         {
             byte[] usernameBytes;
             string username;
             byte[] msgBytes;
             string msg;
 
-            // Infinitament
-            while (true)
+            while (runThread)
             {
-                // Esperem a rebre un username del remitent
-                usernameBytes = new byte[1024];
-                int bytesRec = socket.Receive(usernameBytes);
-                username = Encoding.UTF8.GetString(usernameBytes, 0, bytesRec);
-
-                // Rebem el missatge
-                byte[] tmp = new byte[2048];
-                bytesRec = socket.Receive(tmp);
-                msgBytes = new byte[bytesRec];
-                Array.Copy(tmp, msgBytes, bytesRec);
-
-                tmp = DESDecrypt(msgBytes);
-                msg = Encoding.UTF8.GetString(tmp, 0, tmp.Length);
-
-                //msg = Encoding.UTF8.GetString(msgBytes, 0, bytesRec);
-
-                // Afegim el missatge a la llista
-                Application.Current.Dispatcher.Invoke(new Action(() =>
+                try
                 {
-                    Missatge missatge = new Missatge(username, msg);
-                    missatges.Add(missatge);
-                    lsbMsg.Items.Refresh();
-                }));
+                    // Esperem a rebre un username del remitent
+                    usernameBytes = new byte[1024];
+                    int bytesRec = socket.Receive(usernameBytes);
+                    username = Encoding.UTF8.GetString(usernameBytes, 0, bytesRec);
 
+                    // Rebem el missatge
+                    byte[] tmp = new byte[2048];
+                    bytesRec = socket.Receive(tmp);
+                    msgBytes = new byte[bytesRec];
+                    Array.Copy(tmp, msgBytes, bytesRec);
+
+                    tmp = DESDecrypt(msgBytes);
+                    msg = Encoding.UTF8.GetString(tmp, 0, tmp.Length);
+
+                    // Afegim el missatge a la llista
+                    Application.Current.Dispatcher.Invoke(new Action(() =>
+                    {
+                        Missatge missatge = new Missatge(username, msg);
+                        missatges.Add(missatge);
+                        lsbMsg.Items.Refresh();
+                    }));
+                }
+                catch (ThreadInterruptedException e)
+                {
+                    Console.WriteLine(e.ToString());
+                    return;
+                }
+
+            }
+        }
+        private void listenerRSAFunction(Socket socket, List<Missatge> missatges)
+        {
+            byte[] usernameBytes;
+            string username;
+            byte[] msgBytes;
+            string msg;
+
+            while (runThread)
+            {
+                try
+                {
+                    // Esperem a rebre un username del remitent
+                    usernameBytes = new byte[1024];
+                    int bytesRec = socket.Receive(usernameBytes);
+                    username = Encoding.UTF8.GetString(usernameBytes, 0, bytesRec);
+
+                    // Rebem el missatge
+                    byte[] tmp = new byte[2048];
+                    bytesRec = socket.Receive(tmp);
+                    msgBytes = new byte[bytesRec];
+                    Array.Copy(tmp, msgBytes, bytesRec);
+
+                    tmp = DESDecrypt(msgBytes);
+                    msg = Encoding.UTF8.GetString(tmp, 0, tmp.Length);
+
+                    // Afegim el missatge a la llista
+                    Application.Current.Dispatcher.Invoke(new Action(() =>
+                    {
+                        Missatge missatge = new Missatge(username, msg);
+                        missatges.Add(missatge);
+                        lsbMsg.Items.Refresh();
+                    }));
+                }
+                catch (ThreadInterruptedException e)
+                {
+                    Console.WriteLine(e.ToString());
+                    return;
+                }
 
             }
         }
 
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            runThread = false;
+            socket.Send(Encoding.ASCII.GetBytes("BYE"));
+            listener.Interrupt();
+            socket.Close();
+        }
         byte[] DESEncrypt(byte[] input)
         {
             ICryptoTransform encryptor = des.CreateEncryptor(keyBytes, ivBytes);
@@ -153,7 +233,28 @@ namespace Client
             ICryptoTransform decryptor = des.CreateDecryptor(keyBytes, ivBytes);
             byte[] decryptedBytes = decryptor.TransformFinalBlock(input, 0, input.Length);
             return decryptedBytes;
+        }
 
+        public byte[] RSAEncrypt(string missatge, string clauXml)
+        {
+            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+            rsa.FromXmlString(clauXml);
+
+            byte[] missatgeBytes = Encoding.ASCII.GetBytes(missatge);
+            byte[] missatgeEncriptat = rsa.Encrypt(missatgeBytes, false);
+
+            return missatgeEncriptat;
+        }
+
+        public string RSADecrypt(byte[] missatge, string clauXml)
+        {
+            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+            rsa.FromXmlString(clauXml);
+
+            byte[] missatgeDesencriptat = rsa.Decrypt(missatge, false);
+            string missatgeDesencriptatString = Encoding.ASCII.GetString(missatgeDesencriptat);
+
+            return missatgeDesencriptatString;
         }
     }
 }

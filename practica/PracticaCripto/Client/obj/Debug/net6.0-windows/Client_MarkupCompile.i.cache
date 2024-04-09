@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\Sergio\Desktop\PSP\UF1\practica\PracticaCripto\Client\obj\Debug\net6.0-windows\
+C:\Users\Sergio\Desktop\DAM\pspuf1\PSP-UF1\practica\PracticaCripto\Client\obj\Debug\net6.0-windows\
 Client
 none
 false
 TRACE;DEBUG;NET;NET6_0;NETCOREAPP
-C:\Users\Sergio\Desktop\PSP\UF1\practica\PracticaCripto\Client\App.xaml
+C:\Users\Sergio\Desktop\DAM\pspuf1\PSP-UF1\practica\PracticaCripto\Client\App.xaml
 3106995076
 
 81658987870
-194183970531
+194205575283
 ChatWindow.xaml;LoginWindow.xaml;MissatgeUC.xaml;
 
-True
+False
 

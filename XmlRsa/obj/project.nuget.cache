@@ -1,8 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "q0seNMV8HloSmzxSDP2X4pgYy7ONL9YsVewzUkiUYziRk78uNsf548uz+uwlSJDwSNbHpXnSwRCw1sAnAI3f0A==",
+  "dgSpecHash": "kOx3R8e0UYz6dCsAcdLKrn0xu7pOt4YWfjP/n0FJQtTNTAT76iulkP8Li0oUiPkmNx22u+yV02H2nW1CtUOLqw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Sergio\\Desktop\\PSP\\UF1\\XmlRsa\\XmlRsa.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\Sergio\\Desktop\\DAM\\pspuf1\\PSP-UF1\\XmlRsa\\XmlRsa.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Sergio\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.25\\microsoft.windowsdesktop.app.ref.6.0.25.nupkg.sha512",
+    "C:\\Users\\Sergio\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.25\\microsoft.netcore.app.ref.6.0.25.nupkg.sha512",
+    "C:\\Users\\Sergio\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.25\\microsoft.aspnetcore.app.ref.6.0.25.nupkg.sha512",
+    "C:\\Users\\Sergio\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.25\\microsoft.netcore.app.host.win-x64.6.0.25.nupkg.sha512"
+  ],
   "logs": []
 }

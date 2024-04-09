@@ -7,9 +7,11 @@
         mc:Ignorable="d"
         Title="ChatWindow" Height="600" Width="600"
         Background="#282828"
-        Loaded="Window_Loaded">
+        Loaded="Window_Loaded"
+        Closing="Window_Closing">
     <StackPanel VerticalAlignment="Center">
         <Label Foreground="White" FontSize="25" FontWeight="Bold" Width="500" Margin="10 0 0 0" HorizontalAlignment="Center" Content="Chat" />
+        <Label x:Name="lblMethod" Foreground="White" FontSize="15" Width="500" Margin="10 0 0 10" HorizontalAlignment="Center" Content="" />
         <ScrollViewer Width="500" Height="400">
             <ListBox x:Name="lsbMsg" Background="#3E3E3E" Margin="10 0 0 0">
                 <ListBox.ItemTemplate>

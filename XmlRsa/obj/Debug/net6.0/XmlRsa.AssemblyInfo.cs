@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("XmlRsa")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1773c07eadd1ae8b7d1ea77e403e31ac4a0723cc")]
 [assembly: System.Reflection.AssemblyProductAttribute("XmlRsa")]
 [assembly: System.Reflection.AssemblyTitleAttribute("XmlRsa")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
