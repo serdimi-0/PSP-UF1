@@ -59,7 +59,7 @@ namespace Server
                     Socket handler = socket.Accept();
                     clients.Add(handler);
 
-                    // serve the client in a new thread
+                    // Fem un thread per cada client
                     Thread t = new Thread(() => clientThreadFunction(handler));
                     t.Start();
                 }
@@ -80,7 +80,6 @@ namespace Server
             Console.WriteLine("Usuari connectat: " + username);
 
             byte[] msgBytes;
-            string msg;
 
             while (true)
             {
@@ -92,12 +91,14 @@ namespace Server
                 username = Encoding.UTF8.GetString(usernameBytes, 0, bytesRec);
 
                 // Rebem el missatge
-                msgBytes = new byte[1024];
-                bytesRec = handler.Receive(msgBytes);
-                msg = Encoding.UTF8.GetString(msgBytes, 0, bytesRec);
+                byte[] tmp = new byte[2048];
+                bytesRec = handler.Receive(tmp);
+
+                msgBytes = new byte[bytesRec];
+                Array.Copy(tmp, msgBytes, bytesRec);
 
                 // Mostrem el missatge
-                Console.WriteLine(username + ": " + msg);
+                Console.WriteLine(username + ": " + BitConverter.ToString(msgBytes));
 
                 // Enviem el missatge a tots els clients
                 foreach (Socket client in clients)

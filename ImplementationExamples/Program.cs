@@ -17,9 +17,9 @@ namespace basic
             // DES
             string key = "12345678";
             string iv = "00000000";
-            string encrypted = DESEncrypt(input, key, iv);
-            Console.WriteLine("The DES encryption of " + input + " is: " + encrypted);
-            Console.WriteLine("The DES decryption is: " + DESDecrypt(encrypted, key, iv));
+            byte[] encrypted = DESEncrypt(Encoding.ASCII.GetBytes(input), key, iv);
+            Console.WriteLine("The DES encryption of " + input + " is: " + BitConverter.ToString(encrypted));
+            Console.WriteLine("The DES decryption is: " + Encoding.ASCII.GetString(DESDecrypt(encrypted, key, iv)));
 
             Console.WriteLine("----------------------------------");
             // RSA
@@ -39,26 +39,32 @@ namespace basic
             return BitConverter.ToString(hashBytes);
         }
 
-        static string DESEncrypt(string input, string key, string iv)
+        static byte[] DESEncrypt(byte[] input, string key, string iv)
         {
-            byte[] inputBytes = Encoding.ASCII.GetBytes(input);
             byte[] keyBytes = Encoding.ASCII.GetBytes(key);
             byte[] ivBytes = Encoding.ASCII.GetBytes(iv);
 
-            DES des = DES.Create();
-            ICryptoTransform encryptor = des.CreateEncryptor(keyBytes, ivBytes);
-
-            byte[] encryptedBytes = encryptor.TransformFinalBlock(inputBytes, 0, inputBytes.Length);
-
-            return BitConverter.ToString(encryptedBytes);
+            using (DES des = DES.Create())
+            {
+                ICryptoTransform encryptor = des.CreateEncryptor(keyBytes, ivBytes);
+                byte[] encryptedBytes = encryptor.TransformFinalBlock(input, 0, input.Length);
+                return encryptedBytes;
+            }
         }
 
-        static string DESDecrypt(string input, string key, string iv)
+        static byte[] DESDecrypt(byte[] input, string key, string iv)
         {
-            // TODO: Implement DES decryption
+            byte[] keyBytes = Encoding.ASCII.GetBytes(key);
+            byte[] ivBytes = Encoding.ASCII.GetBytes(iv);
 
-            return "";
+            using (DES des = DES.Create())
+            {
+                ICryptoTransform decryptor = des.CreateDecryptor(keyBytes, ivBytes);
+                byte[] decryptedBytes = decryptor.TransformFinalBlock(input, 0, input.Length);
+                return decryptedBytes;
+            }
         }
+
 
         public static byte[] RSAEncrypt(string DataToEncrypt, RSAParameters RSAKeyInfo, bool DoOAEPPadding)
         {
