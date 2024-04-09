@@ -1,0 +1,31 @@
+﻿<Window x:Class="Client.ChatWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Client"
+        mc:Ignorable="d"
+        Title="ChatWindow" Height="600" Width="600"
+        Background="#282828"
+        Loaded="Window_Loaded">
+    <StackPanel VerticalAlignment="Center">
+        <Label Foreground="White" FontSize="25" FontWeight="Bold" Width="500" Margin="10 0 0 0" HorizontalAlignment="Center" Content="Chat" />
+        <ScrollViewer Width="500" Height="400">
+            <ListBox x:Name="lsbMsg" Background="#3E3E3E" Margin="10 0 0 0">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <local:MissatgeUC HorizontalAlignment="Center" MaxHeight="50" myMessage="{Binding}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </ScrollViewer>
+        <Grid HorizontalAlignment="Center" Width="500" Margin="0 0 0 20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="100"/>
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="txbMsg" Background="#3E3E3E" Foreground="White" Padding="10" Margin="10" KeyDown="txbMsg_KeyDown"/>
+            <Button Grid.Column="1" Height="36" Content="Envia" Click="Button_Click"/>
+        </Grid>
+    </StackPanel>
+</Window>
