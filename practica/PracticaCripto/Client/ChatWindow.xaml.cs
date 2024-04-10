@@ -94,6 +94,8 @@ namespace Client
                     listener = new Thread(() => listenerRSAFunction(socket, missatges));
                     break;
                 case "inv":
+                    lblMethod.Content = "Mètode d'encriptació: Personalitzat";
+                    listener = new Thread(() => listenerCustomFunction(socket, missatges));
                     break;
                 default:
                     break;
@@ -133,6 +135,7 @@ namespace Client
 
                     break;
                 case "inv":
+                    socket.Send(CustomEncrypt(txbMsg.Text, DESKey));
                     break;
                 default:
                     break;
@@ -195,6 +198,7 @@ namespace Client
 
             }
         }
+
         private void listenerRSAFunction(Socket socket, List<Missatge> missatges)
         {
             byte[] usernameBytes, msgBytes, keyBytes;
@@ -245,7 +249,46 @@ namespace Client
             }
         }
 
+        void listenerCustomFunction(Socket socket, List<Missatge> missatges)
+        {
+            byte[] usernameBytes;
+            string username;
+            byte[] msgBytes;
+            string msg;
 
+            while (runThread)
+            {
+                try
+                {
+                    // Esperem a rebre un username del remitent
+                    usernameBytes = new byte[1024];
+                    int bytesRec = socket.Receive(usernameBytes);
+                    username = Encoding.UTF8.GetString(usernameBytes, 0, bytesRec);
+
+                    // Rebem el missatge
+                    byte[] tmp = new byte[2048];
+                    bytesRec = socket.Receive(tmp);
+                    msgBytes = new byte[bytesRec];
+                    Array.Copy(tmp, msgBytes, bytesRec);
+
+                    msg = CustomDecrypt(msgBytes, DESKey);
+
+                    // Afegim el missatge a la llista
+                    Application.Current.Dispatcher.Invoke(new Action(() =>
+                    {
+                        Missatge missatge = new Missatge(username, msg);
+                        missatges.Add(missatge);
+                        lsbMsg.Items.Refresh();
+                    }));
+                }
+                catch (ThreadInterruptedException e)
+                {
+                    Console.WriteLine(e.ToString());
+                    return;
+                }
+
+            }
+        }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             runThread = false;
@@ -315,6 +358,28 @@ namespace Client
                 clau += (char)random.Next(65, 90);
             }
             return clau;
+        }
+
+        public static byte[] CustomEncrypt(string input, string key)
+        {
+            byte[] output = new byte[input.Length];
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                output[i] = (byte)(input[i] ^ key[i % key.Length]);
+            }
+            return output;
+        }
+
+        public static string CustomDecrypt(byte[] input, string key)
+        {
+            char[] output = new char[input.Length];
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                output[i] = (char)(input[i] ^ key[i % key.Length]);
+            }
+            return new string(output);
         }
     }
 }

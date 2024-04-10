@@ -94,13 +94,6 @@ namespace Server
 
                 switch (method)
                 {
-                    case "des":
-                        lock (clients)
-                            clients.Add(client);
-
-                        t = new Thread(() => clientDESThreadFunction(client));
-                        t.Start();
-                        break;
                     case "rsa":
 
                         // Enviem la clau pública del servidor
@@ -122,8 +115,13 @@ namespace Server
                         t = new Thread(() => clientRSAThreadFunction(client));
                         t.Start();
                         break;
+                    case "des":
                     case "inv":
-                        //t = new Thread(() => clientThreadFunctionCustom(handler));
+                        lock (clients)
+                            clients.Add(client);
+
+                        t = new Thread(() => clientSymmetricThreadFunction(client));
+                        t.Start();
                         break;
                     default:
                         break;
@@ -134,7 +132,8 @@ namespace Server
             }
         }
 
-        private static void clientDESThreadFunction(Client client)
+
+        private static void clientSymmetricThreadFunction(Client client)
         {
             byte[] msgBytes;
             int bytesRec;
@@ -255,6 +254,5 @@ namespace Server
 
             return missatgeDesencriptatString;
         }
-
     }
 }

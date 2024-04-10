@@ -28,6 +28,12 @@ namespace basic
             Console.WriteLine("The RSA encryption of " + input + " is: " + BitConverter.ToString(RSAEncrypt(input, parameters, false)));
             Console.WriteLine("The RSA decryption is: " + RSADecrypt(RSAEncrypt(input, parameters, false), parameters, false));
 
+            // Custom
+            key = "12345678";
+            encrypted = CustomEncrypt(input, key);
+            Console.WriteLine("The Custom encryption of " + input + " is: " + BitConverter.ToString(encrypted));
+            Console.WriteLine("The Custom decryption is: " + CustomDecrypt(encrypted, key));
+
 
         }
 
@@ -108,5 +114,27 @@ namespace basic
                 return null;
             }
         }
+        public static byte[] CustomEncrypt(string input, string key)
+        {
+            byte[] output = new byte[input.Length];
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                output[i] = (byte)(input[i] ^ key[i % key.Length]);
+            }
+            return output;
+        }
+
+        public static string CustomDecrypt(byte[] input, string key)
+        {
+            char[] output = new char[input.Length];
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                output[i] = (char)(input[i] ^ key[i % key.Length]);
+            }
+            return new string(output);
+        }
     }
+
 }
